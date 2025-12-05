@@ -2,74 +2,148 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TODO LIST - Home</title>
+    <title>ToDo App - Home</title>
 
-    <!-- Bootstrap -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
-    <!-- Font Awesome Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
     <style>
-        .form-control{
-        padding: 1.375rem .75rem !important;
-    }
+        body {
+            background: url('https://images.unsplash.com/photo-1503264116251-35a269479413?auto=format&fit=crop&w=1950&q=80')
+                        no-repeat center center/cover;
+            height: 100vh;
+            backdrop-filter: blur(5px);
+        }
+
+        .glass-box {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+        }
+
+        .task-card {
+            background: rgba(255, 255, 255, 0.25);
+            border: none;
+            border-radius: 15px;
+            padding: 15px;
+            margin-bottom: 10px;
+        }
+
+        .task-input {
+            border-radius: 30px;
+            padding: 14px 18px;
+        }
+
+        .btn-rounded {
+            border-radius: 30px;
+            padding: 10px 20px;
+            font-weight: 500;
+        }
+
+        .btn-sm {
+            padding: 6px 14px;
+            border-radius: 25px;
+        }
+
+        .task-scroll {
+            height: 350px;
+            overflow-y: scroll;
+            padding-right: 10px;
+        }
+
+        .task-scroll::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .task-scroll::-webkit-scrollbar-thumb {
+            background: #ddd;
+            border-radius: 20px;
+        }
     </style>
 </head>
+
 <body>
-    <div class="container">
-        <h3 class="pt-5 text-center">Django ToDo App</h3>
-        <div class="row">
-            <h4>My Day</h4>
-            <p class="text-muted">{% now "jS F Y" %}</p>
-            <div class="col-md-7 col-lg-7" style="height: 450px; overflow: scroll;">
-                <!-- List of all the tasks for the day -->
-                {% for task in tasks %}
-                <div class="card m-1">
-                    <div class="card-body">
-                        {{ task.task}}
-                        <span style="position: relative; float: right;">
-                            <a href="{% url 'mark_as_done' task.id %}" class="btn btn-success"><i class="fa fa-check"></i> Mark as Done</a>
-                            <a href="{% url 'delete_task' task.pk %}" class="btn btn-danger"><i class="fa fa-trash"></i></a>
-                            <a href="{% url 'edit_task' task.pk %}" class="btn btn-primary"><i class="fa fa-pencil"></i></a>
-                        </span>
+
+<div class="container py-4">
+    <h2 class="text-center text-white fw-bold mb-4">✨ Modern Django ToDo App</h2>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-10 glass-box">
+
+            <h4 class="text-white">My Day</h4>
+            <p class="text-light">{% now "jS F Y" %}</p>
+
+            <div class="row">
+
+                <!-- Active Tasks -->
+                <div class="col-md-7">
+                    <h5 class="text-white mb-3">Today's Tasks</h5>
+                    <div class="task-scroll">
+
+                        {% for task in tasks %}
+                        <div class="task-card d-flex justify-content-between align-items-center">
+                            <strong>{{ task.task }}</strong>
+
+                            <div class="d-flex gap-2">
+                                <a href="{% url 'mark_as_done' task.id %}" class="btn btn-success btn-sm">
+                                    <i class="fa fa-check"></i>
+                                </a>
+                                <a href="{% url 'edit_task' task.id %}" class="btn btn-primary btn-sm">
+                                    <i class="fa fa-pencil"></i>
+                                </a>
+                                <a href="{% url 'delete_task' task.id %}" class="btn btn-danger btn-sm">
+                                    <i class="fa fa-trash"></i>
+                                </a>
+                            </div>
+                        </div>
+                        {% endfor %}
+
                     </div>
                 </div>
-                {% endfor %}
 
-            </div>
-            <div class="col-md-5 col-lg-5">
-                <h5>Completed Tasks</h5>
-                <!-- List of all the tasks that have completed -->
-                {% for task in completed_tasks %}
-                <div class="card m-1">
-                    <div class="card-body">
-                        {{ task.task }}
-                        <span style="position: relative; float: right;">
-                            <a href="{% url 'mark_as_undone' task.pk %}" class="btn btn-danger"><i class="fa fa-times"></i> Mark as Undone</a>
-                        </span>
+                <!-- Completed Tasks -->
+                <div class="col-md-5">
+                    <h5 class="text-white mb-3">Completed Tasks</h5>
+                    <div class="task-scroll">
+
+                        {% for task in completed_tasks %}
+                        <div class="task-card d-flex justify-content-between align-items-center">
+                            <strong>{{ task.task }}</strong>
+
+                            <div class="d-flex gap-2">
+                                <a href="{% url 'mark_as_undone' task.id %}" class="btn btn-warning btn-sm">
+                                    <i class="fa fa-times"></i>
+                                </a>
+                            </div>
+                        </div>
+                        {% endfor %}
+
                     </div>
                 </div>
-                {% endfor %}
 
             </div>
-        </div>
-        <div class="row">
-            <div class="col-md-6 col-lg-6 p-0" style="position: absolute; bottom: 50px;">
-                <!-- To Do Form -->
-                <form action="{% url 'addTask' %}" method="POST" >
-                    {% csrf_token %}
-                    <div class="form-group">
-                        <span style="display: flex;">
-                            <input type="text" name="task" class="form-control" placeholder="Add a task">
-                            <button type="submit" class="btn btn-primary" style="width: 200px;"><i class="fa fa-plus"></i> Add</button>
-                        </span>
-                    </div>
-                </form>
-            </div>
+
+            <hr class="border-light">
+
+            <!-- Add Task -->
+            <form action="{% url 'addTask' %}" method="POST" class="d-flex">
+                {% csrf_token %}
+                <input type="text" name="task" class="form-control task-input me-2" placeholder="Add a new task...">
+                <button type="submit" class="btn btn-primary btn-rounded">
+                    <i class="fa fa-plus"></i> Add
+                </button>
+            </form>
+
         </div>
     </div>
+</div>
+
 </body>
 </html>
